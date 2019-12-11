@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>仿 flash 圖片切換</title>
+    <script src="./fn.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body{
+            background-color: black;
+        }
+
+        h3 {
+            border: 1px solid rgb(145, 142, 142);
+            height: 50px;
+            width: 600px;
+            color: rgb(250, 248, 248);
+            margin: 50px auto;
+            text-align: center;
+            line-height: 50px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #box {
+            width: 600px;
+            height: 470px;
+            border: 5px solid rgb(14, 13, 13);
+            margin: 40px auto;
+        }
+
+        #box #bigView {
+            width: 600px;
+            height: 355px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #box #bigView ul {
+            list-style: none;
+            width: 3000px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        #box #bigView ul li {
+            width: 600px;
+            height: 355px;
+            float: left;
+        }
+
+        #box #bigView img {
+            width: 600px;
+            height: 355px;
+        }
+
+        #box #back img,
+        #box #next img {
+            width: 40px;
+            height: 47px;
+        }
+
+        #box #back {
+            width: 250px;
+            height: 355px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        #box #back:hover {
+            opacity: 1;
+            filter: alpha(opacity=100);
+        }
+
+        #box #back img {
+            position: absolute;
+            left: 0;
+            top: 185px;
+        }
+
+        #box #next {
+            width: 250px;
+            height: 355px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        #box #next:hover {
+            opacity: 1;
+            filter: alpha(opacity=100);
+        }
+
+        #box #next img {
+            position: absolute;
+            right: 0;
+            top: 185px;
+        }
+
+        #box #smallView {
+            width: 600px;
+            height: 115px;
+            background: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #box #smallView ul {
+            width: 900px;
+            height: 115px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        #box #smallView li {
+            float: left;
+            opacity: 0.3;
+            filter: alpha(opacity=30);
+        }
+
+        #box #smallView img {
+            width: 160px;
+            height: 95px;
+            margin: 10px;
+        }
+
+        .active{
+            opacity: 1;
+            filter: alpha(opacity=100);
+        }
+    </style>
+</head>
+
+<body>
+    <h3>仿 flash 輪播圖</h3>
+    <div id="box">
+        <!-- 大图-->
+        <div id="bigView">
+            <div id="back">
+                <a href="#">
+                    <img src="img/left.png" />
+                </a>
+            </div>
+            <div id="next">
+                <a href="#">
+                    <img src="img/right.png" />
+                </a>
+            </div>
+
+            <ul>
+                <li> <img src="img/Akali_Splash_0.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_1.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_2.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_3.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_4.jpg" /> </li>
+            </ul>
+        </div>
+
+        <!--小图-->
+        <div id="smallView">
+            <ul>
+                <li class="active"> <img src="img/Akali_Splash_0.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_1.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_2.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_3.jpg" /> </li>
+                <li> <img src="img/Akali_Splash_4.jpg" /> </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        var aSmallLi = $('smallView').getElementsByTagName('li')
+        var oSmallUl = $('smallView').getElementsByTagName('ul')[0]
+        var oBigUl = $('bigView').getElementsByTagName('ul')[0]
+        var now = 0
+        var hasClick = 0
+        goMove(aSmallLi[now], 'opacity', 100)
+
+
+        $('next').onclick = function () {
+            goMove(aSmallLi[now], 'opacity', 30)
+            now++
+            if (now > 4) {
+                now = 0
+            }
+            changeView()
+        }
+
+        $('back').onclick = function () {
+            goMove(aSmallLi[now], 'opacity', 30)
+            now--
+            if (now < 0) {
+                now = 4
+            }
+            changeView()
+        }
+
+        for (i = 0; i < aSmallLi.length; i++) {
+            aSmallLi[i].i = i
+            aSmallLi[i].onmouseover = function () {
+                goMove(this, 'opacity', 100)
+            }
+            aSmallLi[i].onmouseout = function () {
+                if(this.i!==now){
+                    goMove(this, 'opacity', 30)
+                }
+            }
+            aSmallLi[i].onclick = function () {
+                goMove(aSmallLi[now], 'opacity', 30)
+                now = this.i
+                changeView()
+            }
+        }
+
+        function changeView() {
+            goMove(oBigUl,'left',-600*now)
+            goMove(aSmallLi[now], 'opacity', 100)
+            goMove(oSmallUl, 'left', -75 * now)
+        }
+    </script>
+</body>
+
+</html>
